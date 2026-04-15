@@ -1,0 +1,658 @@
+import { useState } from “react”;
+
+const mindMapData = [
+{
+id: “overview”,
+label: “Cytoskeleton Overview”,
+emoji: “📊”,
+color: “#4ECDC4”,
+glow: “0 0 20px rgba(78,205,196,0.5)”,
+sections: [
+{
+title: “🔵 Microtubules”,
+items: [
+“Subunits: GTP-αβ tubulin heterodimer”,
+“Plus (+) end: β-tubulin → rapid growth”,
+“Minus (–) end: α-tubulin → slow / anchored in cells”,
+“Enzymatic activity: GTPase (β-subunit ONLY)”,
+“Motor proteins: Kinesins & Dyneins”,
+“Associated proteins: MAPs”,
+“Structure: Stiff, hollow, inextensible tube”,
+“Diameter: 25 nm outer | 13 protofilaments”,
+“Distribution: All eukaryotes (cytoplasm)”,
+“Primary function: Support, intracellular transport, cell organization”
+]
+},
+{
+title: “🟣 Intermediate Filaments”,
+items: [
+“Subunits: ~70 different proteins → incorporated as tetramers”,
+“NO polarity”,
+“NO enzymatic activity”,
+“NO motor proteins”,
+“Associated proteins: Plakins”,
+“Structure: Tough, flexible, extensible filament”,
+“Diameter: 10–12 nm”,
+“Distribution: Animals only (cytoplasm + nucleus)”,
+“Primary function: Structural support, mechanical strength”
+]
+},
+{
+title: “🔴 Actin Filaments (Microfilaments)”,
+items: [
+“Subunits: ATP-actin monomers”,
+“Plus (+) end: barbed end → FASTER growth”,
+“Minus (–) end: pointed end → slower growth”,
+“Enzymatic activity: ATPase”,
+“Motor proteins: Myosins”,
+“Associated proteins: Actin-binding proteins (ABPs) — 165 types!”,
+“Structure: Flexible, inextensible helical filament”,
+“Diameter: 8 nm”,
+“Distribution: All eukaryotes (cytoplasm)”,
+“Primary function: Motility, contractility, intracellular transport”
+]
+}
+]
+},
+{
+id: “microtubule”,
+label: “Microtubule Structure & Dynamics”,
+emoji: “🔵”,
+color: “#45B7D1”,
+glow: “0 0 20px rgba(69,183,209,0.5)”,
+sections: [
+{
+title: “📐 MT Structure”,
+items: [
+“Hollow tube of αβ-tubulin dimers — do NOT separate”,
+“Both α & β subunits bind GTP (one molecule each)”,
+“ONLY β-subunit hydrolyzes GTP → GDP (intrinsic GTPase)”,
+“αβ-dimers added end-to-end → protofilament (alternating α+β)”,
+“13 protofilaments wrap around → complete microtubule”,
+“(+) end: β-tubulin exposed → rapid growth site”,
+“(–) end: α-tubulin exposed → anchored to MTOC in cells”,
+“Lumen = hollow center of tubule”
+]
+},
+{
+title: “⚗️ GTP Role in Polymerization”,
+items: [
+“α-tubulin: ALWAYS bound to GTP | NEVER bound to GDP”,
+“β-tubulin: has intrinsic GTPase activity”,
+“GTP-tubulin (yellow/stable): β bound to GTP → favorable conformation for assembly”,
+“GDP-tubulin (red/unstable): β bound to GDP → stores potential energy”,
+“No polymerization if GTP-tubulin NOT present”,
+“GDP-tubulin CANNOT be added to (+) end”,
+“Energy from hydrolysis is NOT needed for polymerization — stored in GDP polymer”
+]
+},
+{
+title: “💥 Dynamic Instability Model”,
+items: [
+“At all times: two populations of MTs coexist”,
+“POPULATION A (Growing): GTP-tubulin at (+) end”,
+“→ GTP-Cap forms → stabilizes the MT”,
+“→ Once added, GTP hydrolyzed to GDP”,
+“POPULATION B (Shrinking): GDP-tubulin at (+) end”,
+“→ GTP-cap lost when rate of hydrolysis > rate of GTP-tubulin addition”,
+“→ GDP-tubulin rapidly leaves (+) end → releases potential energy”,
+“CATASTROPHE: GTP-cap gone → MT is unstable → rapid disassembly”,
+“RESCUE: Residual GTP-tubulin islands in MT lattice (‘speed bumps’)”,
+“GDP-tubulin recharged to GTP-tubulin in cytoplasm”
+]
+},
+{
+title: “🔮 MTOCs (Microtubule Organizing Centers)”,
+items: [
+“= Nucleation sites where MTs are initiated”,
+“Control NUMBER of microtubules”,
+“Anchor (–) ends to ensure proper POLARITY”,
+“Determine TIME & PLACE of MT assembly”,
+“All MTOCs contain γ-tubulin (γ-TuRCs = γ-tubulin ring complexes)”,
+“Each γ-TuRC anchors 1 MT”,
+“Animal cells have TWO MTOCs:”,
+“CENTROSOMES (near nucleus):”,
+“→ Pair of centrioles oriented perpendicular to each other”,
+“→ Surrounded by pericentriolar material (PCM)”,
+“→ 9 sets of 3× microtubules (A,B,C); only A tubule is complete (13 protofilaments)”,
+“→ A tubule connected to central hub = ‘cartwheel’ structure”,
+“BASAL BODIES (near cilia & flagella):”,
+“→ Only involved in motile appendages”
+]
+},
+{
+title: “🧩 MAPs & Disease”,
+items: [
+“2 categories: STABILIZERS & DESTABILIZERS”,
+“STABILIZERS:”,
+“→ Associate with GTP cap → promote growth, prevent depoly”,
+“→ Associate with α-tubulin → cap (–) end”,
+“→ Stabilize GDP-tubulin lattice → allow interaction with other proteins”,
+“→ Bind tubulin dimers to promote polymerization”,
+“DESTABILIZERS:”,
+“→ Capping proteins | Severing proteins (e.g., katanin)”,
+“TAU PROTEIN & ALZHEIMER’S:”,
+“HEALTHY: low phospho-tau → optimal MT binding → stable MT → normal transport”,
+“ALZHEIMER’S: hyperphospho-tau → dissociates from MT → MT disassembles”,
+“→ ① Intracellular transport disrupted”,
+“→ ② Neurofibrillary tangles (tangles of hyperphos. tau)”
+]
+}
+]
+},
+{
+id: “actin”,
+label: “Microfilaments (Actin)”,
+emoji: “🔴”,
+color: “#FF6B6B”,
+glow: “0 0 20px rgba(255,107,107,0.5)”,
+sections: [
+{
+title: “🏗️ MF Structure & Polarity”,
+items: [
+“G-actin (globular monomer): binds & hydrolyzes ATP”,
+“→ α-actin: muscle-specific”,
+“→ β-actin & γ-actin: non-muscle actins”,
+“F-actin (filamentous): 2 strands of G-actin polymers twisted together”,
+“Polarity revealed by Myosin S1 decoration in vitro:”,
+“→ Barbed end = Plus (+) end → FASTER growth”,
+“→ Pointed end = Minus (–) end → slower growth”,
+“G-actin added in same orientation → gives filament directionality”,
+“Growth faster at barbed (+) end than pointed (–) end”
+]
+},
+{
+title: “♻️ In Vitro Assembly & Treadmilling”,
+items: [
+“Rate of assembly depends on [ATP-actin]”,
+“Once ATP-actin incorporated → hydrolyzed to ADP-actin in filament”,
+“MT vs MF assembly comparison:”,
+“→ MT: GTP-tubulin | MF: ATP-actin (parallel process!)”,
+“→ Hydrolysis: GTP→GDP | ATP→ADP”,
+“→ Polymer destabilized by GDP/ADP forms”,
+“High [ATP-actin]: ATP-actin added ~10× faster at (+) vs (–) end”,
+“As [ATP-actin] drops → net addition at (+), net loss at (–)”,
+“TREADMILLING: loss at (–) = addition at (+) → filament length stable”,
+“→ Filament effectively ‘moves’ toward (+) end”,
+“ADP-actin recharged to ATP-actin by Profilin in cytoplasm”
+]
+},
+{
+title: “🔧 Actin-Binding Proteins (ABPs) — 165 types”,
+items: [
+“① FILAMENT NUCLEATING: Arp2/3 — speeds up very slow spontaneous nucleation”,
+“② MONOMER-SEQUESTERING: prevent polymerization, control [ATP-actin] pool”,
+“③ END-BLOCKING (CAPPING): regulate growth by capping (+)→(–) ends”,
+“④ MONOMER-POLYMERIZING: Profilin — promotes MF growth via ADP→ATP exchange (ABP)”,
+“⑤ DEPOLYMERIZING: Cofilin — promotes depolymerization of older MFs”,
+“⑥ CROSS-LINKING: loose mesh-like network (gel structure)”,
+“⑦ FILAMENT-SEVERING: Cofilin — cuts MFs → makes new (+) and (–) ends”,
+“→ More free ends = more sites for polymerization”,
+“⑧ MEMBRANE-BINDING: Talin, Vinculin”,
+“→ Links actin cytoskeleton to membrane & ECM”,
+“→ Force transduction at focal adhesions”
+]
+}
+]
+},
+{
+id: “intermediate”,
+label: “Intermediate Filaments”,
+emoji: “🟣”,
+color: “#A29BFE”,
+glow: “0 0 20px rgba(162,155,254,0.5)”,
+sections: [
+{
+title: “🏛️ IF Structure”,
+items: [
+“Solid, smooth, unbranched → strong, rope-like fibers”,
+“Radiate through the cytoplasm”,
+“Interconnect with MTs & MFs via PLECTIN crossbridges”,
+“>1 type of subunit | 5 major classes (I–V)”,
+“Provide mechanical support to cell”,
+“CONSERVED CENTRAL FIBROUS DOMAIN (same in ALL IFs):”,
+“→ α-helical in structure”,
+“→ Similar in length & aa composition across all IF types”,
+“VARIABLE GLOBULAR ENDS:”,
+“→ Different sizes & aa composition between IF classes”
+]
+},
+{
+title: “🔨 IF Assembly — No ATP or GTP!”,
+items: [
+“KEY: NO ATP or GTP required (unlike MT & MF)”,
+“NO POLARITY (distinguishes IF from MT & MF)”,
+“Step 1: MONOMER → has polarity”,
+“Step 2: DIMER = 2 monomers form coiled-coil → has polarity”,
+“Step 3: TETRAMER = 2 dimers in ANTIPARALLEL arrangement → NO polarity”,
+“→ Tetramer = BASIC UNIT OF ASSEMBLY (analogous to G-actin & αβ-tubulin)”,
+“Step 4: 8× Tetramers arranged LATERALLY → Unit Length Filament (ULF)”,
+“Step 5: ULFs stack end-to-end → Mature IF (~60 nm diameter)”,
+“ALS (Amyotrophic Lateral Sclerosis):”,
+“→ Aggregations of IF in motor neurons → neurodegeneration”
+]
+},
+{
+title: “⚡ IF Functions in Cell”,
+items: [
+“Involved in ANCHORING & ORGANIZATION within cell”,
+“Connected to ECM via integrins through hemidesmosomes”,
+“Connected to other cells via desmosomes”,
+“Nuclear lamins: scaffold for nuclear envelope”,
+“Keratins: in epithelial cells (skin, hair, nails)”,
+“Neurofilaments: in neurons → axon diameter regulation”,
+“Vimentin: in mesenchymal cells”,
+“Interconnect with MT & MF networks via plectin crossbridges”
+]
+}
+]
+},
+{
+id: “motorproteins”,
+label: “Motor Proteins”,
+emoji: “⚙️”,
+color: “#FDCB6E”,
+glow: “0 0 20px rgba(253,203,110,0.5)”,
+sections: [
+{
+title: “🏗️ Motor Protein Structure — 3 Classes”,
+items: [
+“3 classes: Kinesin-1, Cytoplasmic Dynein, Myosin”,
+“HEAD (motor) domain:”,
+“→ Force-generating”,
+“→ Globular heads that bind & hydrolyze ATP”,
+“→ ‘Feet’ that bind MT or MF (filament-binding)”,
+“TAIL domain:”,
+“→ Cargo-binding (vesicles, organelles, other myosins)”,
+“→ Dynein uses DYNACTIN complex as adaptor for cargo”,
+“Kinesin: two-headed, walks along MTs toward (+) end”,
+“Dynein: large, walks toward (–) end, different structure”
+]
+},
+{
+title: “👟 Kinesin: Hand-Over-Hand Model (→ + end)”,
+items: [
+“Moves TOWARD (+) end → AWAY from cell center (anterograde/exocytic)”,
+“Two heads: leading head (1) & lagging head (2)”,
+“① Lagging head hydrolyzes ATP → ADP+Pi → DETACHES from MT”,
+“② ATP binds leading head → conformational change → creates tension between heads”,
+“③ Tension causes lagging head to SWING FORWARD past leading head”,
+“④ Ex-lagging head (new leading) BINDS MT one step ahead”,
+“⑤ New leading head releases ADP”,
+“⑥ New lagging head hydrolyzes ATP → back to ①”,
+“Net movement: one tubulin dimer length per cycle toward (+) end”
+]
+},
+{
+title: “🦾 Cytoplasmic Dynein (→ – end)”,
+items: [
+“Moves TOWARD (–) end → TOWARD cell center (retrograde/endocytic)”,
+“Both feet attached to MT, both heads bound to ADP initially”,
+“① Leading head binds ATP → conformational change → leading foot detaches”,
+“② Leading foot rebinds MT one step forward → creates tension between heads”,
+“③ Lagging head binds ATP → lagging foot detaches → steps forward”,
+“Path A = (–) end directed progress (productive)”,
+“Path B (Regression) = step backward → no directional progress”,
+“Uses DYNACTIN complex as adaptor for cargo binding”,
+“Structurally different from kinesin (much larger)”
+]
+},
+{
+title: “🎯 MT-Based Intracellular Transport”,
+items: [
+“Kinesin (+): away from MTOC → Golgi → ER → cell periphery”,
+“Cytoplasmic Dynein (–): toward MTOC → center of cell”,
+“Cargo: vesicles, mitochondria, lysosomes”,
+“MELANOCYTE PIGMENTATION (fish & frog example):”,
+“→ Color change via hormonal control”,
+“→ DISPERSAL (dark skin): Kinesin carries melanosomes to periphery”,
+“→ AGGREGATION (light skin): Dynein brings melanosomes to center”,
+“Occurs in melanosomes inside melanocytes”
+]
+},
+{
+title: “💪 Myosin Non-Muscle Movements”,
+items: [
+“INTRACELLULAR TRANSPORT (cooperates with MTs):”,
+“→ Myosin V: toward (+) barbed end → cortex/periphery”,
+“→ Myosin VI: toward (–) pointed end”,
+“→ Cargo transfer: Kinesin (MT) → Myosin V → Plasma Membrane”,
+“→ Myosin VI → Dynein → toward center of cell”,
+“CELL MIGRATION:”,
+“→ Myosin II: contractile → drives trailing edge retraction”,
+“→ Myosin I: anchors actin to plasma membrane (cortex)”,
+“All myosins move along ACTIN filaments (not MTs)”
+]
+}
+]
+},
+{
+id: “migration”,
+label: “Cell Migration & Motility”,
+emoji: “🏃”,
+color: “#00B894”,
+glow: “0 0 20px rgba(0,184,148,0.5)”,
+sections: [
+{
+title: “🦶 4 Steps of Cell Migration”,
+items: [
+“① ACTIN POLYMERIZATION & BRANCHING at leading edge”,
+“→ Lamellipodium: thin gel-like sheet of cytoplasm at front”,
+“→ Filopodia: finger-like projections (parallel α-actinin bundles)”,
+“② ATTACHMENT of protrusion to ECM via FOCAL ADHESIONS”,
+“→ Focal adhesion = Actin filaments — Integrins — ECM”,
+“③ TRAILING EDGE DETACHMENT (driven by Myosin II)”,
+“→ Myosin II stress fibers pull rear of cell forward”,
+“→ Results in rear focal adhesion detachment”,
+“④ RETRACT trailing edge using stress fibers + myosin”
+]
+},
+{
+title: “🌿 Actin Polymerization at Leading Edge”,
+items: [
+“① Signal received at cell surface (chemoattractants, cytokines)”,
+“② ARP2/3 activated by WASP (located near plasma membrane)”,
+“③ Activated Arp2/3 NUCLEATES on SIDE of existing actin MF”,
+“→ Creates branched actin network”,
+“④ Actin elongates at BARBED (+) end of new branch”,
+“→ PROFILIN (ABP) promotes polymerization via ADP→ATP exchange”,
+“→ Actin-ATP is the monomer being added”,
+“⑤ CAPPING PROTEINS stop elongation of OLDER MFs”,
+“→ Increases [Actin-ATP] pool → feeds growth of newer MFs”,
+“→ Rapid elongation of new MFs pushes membrane forward”,
+“⑥ COFILIN disassembles capped MFs”,
+“→ PROFILIN converts ADP-actin → ATP-actin → recycled to leading edge”
+]
+},
+{
+title: “🦠 Listeria Hijacks Host Actin”,
+items: [
+“Listeria monocytogenes: nasty food-borne pathogen”,
+“Sources: raw vegetables, raw/soft cheeses, deli meats, hot dogs, ice cream”,
+“① Listeria expresses ActA protein on its surface”,
+“② ActA activates Arp2/3 in host cell (acts exactly like WASP)”,
+“③ Arp2/3 nucleates new filaments on existing host MFs”,
+“④ New filaments grow at barbed (+) end FACING Listeria surface”,
+“→ Actin-ATP added | Profilin promotes elongation”,
+“⑤ Growing filaments push bacteria FORWARD”,
+“→ Forms visible ‘comet tail’ of rapidly polymerizing actin”,
+“⑥ Filaments capped & disassembled → Actin recycled”,
+“Net result: Listeria propels through host cytoplasm cell-to-cell”
+]
+}
+]
+}
+];
+
+const styles = {
+container: {
+minHeight: “100vh”,
+background: “linear-gradient(135deg, #060810 0%, #0d1117 50%, #060d12 100%)”,
+fontFamily: “‘Segoe UI’, system-ui, sans-serif”,
+color: “#e2e8f0”,
+padding: “16px”,
+overflowX: “hidden”,
+},
+header: {
+textAlign: “center”,
+padding: “24px 16px 20px”,
+marginBottom: “8px”,
+},
+title: {
+fontSize: “clamp(18px, 4vw, 28px)”,
+fontWeight: “800”,
+background: “linear-gradient(90deg, #4ECDC4, #45B7D1, #A29BFE, #FF6B6B, #FDCB6E, #00B894)”,
+WebkitBackgroundClip: “text”,
+WebkitTextFillColor: “transparent”,
+letterSpacing: “-0.5px”,
+marginBottom: “6px”,
+},
+subtitle: {
+fontSize: “12px”,
+color: “#64748b”,
+letterSpacing: “2px”,
+textTransform: “uppercase”,
+},
+grid: {
+display: “grid”,
+gridTemplateColumns: “repeat(auto-fill, minmax(160px, 1fr))”,
+gap: “10px”,
+maxWidth: “900px”,
+margin: “0 auto 16px”,
+},
+nodeCard: (color, active, glow) => ({
+background: active
+? `linear-gradient(135deg, ${color}22, ${color}11)`
+: “rgba(255,255,255,0.03)”,
+border: `1px solid ${active ? color : "rgba(255,255,255,0.06)"}`,
+borderRadius: “12px”,
+padding: “14px 12px”,
+cursor: “pointer”,
+transition: “all 0.2s ease”,
+boxShadow: active ? glow : “none”,
+textAlign: “center”,
+userSelect: “none”,
+}),
+nodeEmoji: {
+fontSize: “22px”,
+marginBottom: “6px”,
+display: “block”,
+},
+nodeLabel: (color, active) => ({
+fontSize: “11px”,
+fontWeight: “700”,
+color: active ? color : “#94a3b8”,
+lineHeight: “1.3”,
+letterSpacing: “0.3px”,
+}),
+expandedPanel: {
+maxWidth: “900px”,
+margin: “0 auto 16px”,
+background: “rgba(255,255,255,0.02)”,
+border: “1px solid rgba(255,255,255,0.06)”,
+borderRadius: “16px”,
+overflow: “hidden”,
+},
+panelHeader: (color) => ({
+background: `linear-gradient(90deg, ${color}22, transparent)`,
+borderBottom: `1px solid ${color}33`,
+padding: “16px 20px”,
+display: “flex”,
+alignItems: “center”,
+gap: “10px”,
+}),
+panelTitle: (color) => ({
+fontSize: “15px”,
+fontWeight: “800”,
+color: color,
+letterSpacing: “-0.3px”,
+}),
+sectionsContainer: {
+padding: “12px”,
+display: “grid”,
+gridTemplateColumns: “repeat(auto-fill, minmax(260px, 1fr))”,
+gap: “10px”,
+},
+sectionCard: (color, expanded) => ({
+background: expanded ? `${color}11` : “rgba(255,255,255,0.02)”,
+border: `1px solid ${expanded ? color + "44" : "rgba(255,255,255,0.06)"}`,
+borderRadius: “10px”,
+overflow: “hidden”,
+transition: “all 0.2s ease”,
+cursor: “pointer”,
+}),
+sectionHeader: (color) => ({
+padding: “10px 14px”,
+display: “flex”,
+justifyContent: “space-between”,
+alignItems: “center”,
+background: “transparent”,
+}),
+sectionTitle: (color, expanded) => ({
+fontSize: “11.5px”,
+fontWeight: “700”,
+color: expanded ? color : “#cbd5e1”,
+letterSpacing: “0.2px”,
+}),
+chevron: (expanded, color) => ({
+fontSize: “10px”,
+color: expanded ? color : “#475569”,
+transform: expanded ? “rotate(180deg)” : “rotate(0deg)”,
+transition: “transform 0.2s ease”,
+}),
+itemsList: {
+padding: “4px 14px 12px”,
+margin: 0,
+listStyle: “none”,
+},
+item: (color) => ({
+fontSize: “10.5px”,
+color: “#94a3b8”,
+lineHeight: “1.6”,
+padding: “2px 0”,
+paddingLeft: “14px”,
+position: “relative”,
+}),
+itemDot: (color) => ({
+position: “absolute”,
+left: “0”,
+top: “7px”,
+width: “5px”,
+height: “5px”,
+borderRadius: “50%”,
+background: color,
+opacity: 0.7,
+}),
+legend: {
+maxWidth: “900px”,
+margin: “0 auto 16px”,
+display: “flex”,
+flexWrap: “wrap”,
+gap: “8px”,
+justifyContent: “center”,
+padding: “10px”,
+background: “rgba(255,255,255,0.02)”,
+borderRadius: “10px”,
+border: “1px solid rgba(255,255,255,0.04)”,
+},
+legendItem: (color) => ({
+display: “flex”,
+alignItems: “center”,
+gap: “5px”,
+fontSize: “9px”,
+color: “#64748b”,
+letterSpacing: “0.5px”,
+textTransform: “uppercase”,
+}),
+legendDot: (color) => ({
+width: “8px”,
+height: “8px”,
+borderRadius: “50%”,
+background: color,
+}),
+hint: {
+textAlign: “center”,
+fontSize: “10px”,
+color: “#334155”,
+letterSpacing: “1px”,
+textTransform: “uppercase”,
+marginBottom: “12px”,
+}
+};
+
+function SectionCard({ section, color }) {
+const [expanded, setExpanded] = useState(false);
+return (
+<div
+style={styles.sectionCard(color, expanded)}
+onClick={() => setExpanded(!expanded)}
+>
+<div style={styles.sectionHeader(color)}>
+<span style={styles.sectionTitle(color, expanded)}>{section.title}</span>
+<span style={styles.chevron(expanded, color)}>▼</span>
+</div>
+{expanded && (
+<ul style={styles.itemsList}>
+{section.items.map((item, i) => (
+<li key={i} style={styles.item(color)}>
+<span style={styles.itemDot(color)} />
+{item}
+</li>
+))}
+</ul>
+)}
+</div>
+);
+}
+
+export default function MindMap() {
+const [activeNode, setActiveNode] = useState(null);
+
+const activeData = mindMapData.find((n) => n.id === activeNode);
+
+const toggleNode = (id) => {
+setActiveNode((prev) => (prev === id ? null : id));
+};
+
+return (
+<div style={styles.container}>
+<div style={styles.header}>
+<h1 style={styles.title}>Unit 8: Cytoskeleton & Motility — Part 1</h1>
+<p style={styles.subtitle}>Interactive Mind Map · BIO Cell Biology</p>
+</div>
+
+```
+  <p style={styles.hint}>▼ Tap any topic to expand · Tap sections for details</p>
+
+  <div style={styles.grid}>
+    {mindMapData.map((node) => (
+      <div
+        key={node.id}
+        style={styles.nodeCard(node.color, activeNode === node.id, node.glow)}
+        onClick={() => toggleNode(node.id)}
+      >
+        <span style={styles.nodeEmoji}>{node.emoji}</span>
+        <div style={styles.nodeLabel(node.color, activeNode === node.id)}>
+          {node.label}
+        </div>
+        <div style={{ marginTop: "8px", fontSize: "9px", color: activeNode === node.id ? node.color + "88" : "#1e293b" }}>
+          {node.sections.length} sections
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {activeData && (
+    <div style={styles.expandedPanel}>
+      <div style={styles.panelHeader(activeData.color)}>
+        <span style={{ fontSize: "20px" }}>{activeData.emoji}</span>
+        <span style={styles.panelTitle(activeData.color)}>{activeData.label}</span>
+        <span style={{ marginLeft: "auto", fontSize: "11px", color: activeData.color + "88" }}>
+          {activeData.sections.length} topics
+        </span>
+      </div>
+      <div style={styles.sectionsContainer}>
+        {activeData.sections.map((section, i) => (
+          <SectionCard key={i} section={section} color={activeData.color} />
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div style={styles.legend}>
+    {mindMapData.map((n) => (
+      <div key={n.id} style={styles.legendItem(n.color)}>
+        <div style={styles.legendDot(n.color)} />
+        {n.label.split(" ")[0]}
+      </div>
+    ))}
+  </div>
+
+  <div style={{ textAlign: "center", fontSize: "9px", color: "#1e293b", letterSpacing: "1px", paddingBottom: "16px" }}>
+    Based on SC_2026 Unit 8 Lecture Slides
+  </div>
+</div>
+```
+
+);
+}
